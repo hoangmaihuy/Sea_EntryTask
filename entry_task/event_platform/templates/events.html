@@ -1,0 +1,52 @@
+{% extends "index.html" %}
+{% block container %}
+  <div class="header" align="center" style="margin-top: 20px">
+    <h4> All events</h4>
+  </div>
+  <div class="container">
+    <form>
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label class="col-form-label"> Start date</label>
+          <input type="datetime-local" id="start_date" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label class="col-form-label">End date</label>
+          <input type="datetime-local" id="end_date" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label class="col-form-label">Category</label>
+          <input type="text" id="category" placeholder="Filter by category" class="form-control">
+        </div>
+        <div class="col-md-1" align="bottom">
+          <button type="button" class="btn-primary btn" style="position: absolute; bottom:0" onclick="filterEvents()">Filter</button>
+        </div>
+        <div class="col-md-2" >
+          <button type="button" class="btn-success btn" style="position: absolute; bottom:0" onclick="toCreateEvent()">Create new event</button>
+        </div>
+      </div>
+    </form>
+    <table class="table">
+      <thead>
+        <th scope="col">#</th>
+        <th scope="col">Title</th>
+        <th scope="col">Location</th>
+        <th scope="col">Date</th>
+        <th scope="col">Categories</th>
+      </thead>
+      <tbody id="event_table">
+
+      </tbody>
+    </table>
+  </div>
+  <div class="footer" align="center">
+    <div class="col-md-4 offset-2">
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="/Previous">Previous</a></li>
+        <li class="page-item active"><a class="page-link" href="#">{{ page_id }}</a></li>
+        <li class="page-item"><a class="page-link" href="/Next">Next</a></li>
+      </ul>
+    </div>
+  </div>
+  <script>getEventsPage({{ page_id }})</script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "index.html" %}
+{% block container %}
+  <div class="header" style="margin-top: 50px" align="center">
+    <h4 id="title"></h4>
+    <span id="date"></span> in <span id="location"></span>
+  </div>
+  <div class="container">
+    <img class="img-fluid" id="photo">
+    <p id="description"></p>
+    <ul id="categories" style="list-style-type: none">Categories: </ul>
+    <ul id="likes" style="list-style-type: none"> <span id="likesCount">0</span> users liked this event: </ul>
+    <ul id="participants" style="list-style-type: none"><span id="participantsCount">0</span> users participated in this event: </ul>
+    <button type="button" class="btn btn-sm btn-primary" onclick="likeEvent({{ event_id }})">Like</button>
+    <button type="button" class="btn btn-sm btn-success" onclick="participateEvent({{ event_id }})">Participate</button>
+    <ul id="comments">Comments</ul>
+    <form>
+      <div class="form-group">
+        <textarea class="form-control col-md-5" id="new_comment" placeholder="Write your comment"></textarea>
+      </div>
+      <button type="button" class="btn btn-sm btn-secondary" onclick="submitComment({{ event_id }})">Comment</button>
+    </form>
+  </div>
+  <script>getEventDetail({{ event_id }})</script>
+{% endblock %}
