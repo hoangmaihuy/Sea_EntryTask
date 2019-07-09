@@ -1,0 +1,6 @@
+Django==1.11.20
+python-memcached
+crypto
+jsonschema
+python-dateutil
+mysql-connector-python
