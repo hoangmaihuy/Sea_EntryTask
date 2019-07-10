@@ -5,18 +5,24 @@ from .constant import TOKEN_TIME
 from django.core.cache import cache
 import dateutil.parser
 from django.forms.models import model_to_dict
+from django.db import connection
+from collections import namedtuple
+
+
+nt_result = namedtuple('Result', ['id', 'username', 'password', 'salt', 'role'])
 
 
 def get_user(username):
     user = cache.get(username)
     if user:
         return user
-    try:
-        user = User.objects.get(username=username)
-        cache.set(username, user)
-        return user
-    except User.DoesNotExist:
+    cursor = connection.cursor()
+    cursor.execute("SELECT id, username, password, salt, role FROM user_tab WHERE username=%s", [username])
+    row = cursor.fetchone()
+    if not row:
         return None
+    user = nt_result(*row)
+    return user
 
 
 def new_user(username, password):

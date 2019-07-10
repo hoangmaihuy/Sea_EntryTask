@@ -32,7 +32,6 @@ def login(request):
             salt = user.salt
             raw_password = decrypt(password, key)
             hash_password = sha(raw_password+salt)
-            print(raw_password, hash_password, user.password)
             if hash_password != user.password:
                 return make_response(BAD_REQUEST, "Password Incorrect")
             return make_response(OK, "Login Successfully", db_connector.new_session(user))

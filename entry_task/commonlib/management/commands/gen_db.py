@@ -5,7 +5,7 @@ from datetime import datetime
 from commonlib.utilities import sha, random_string
 import mysql.connector
 
-ENTRIES_NUMBER = 10
+ENTRIES_NUMBER = 1000000
 DOMAIN = 'http://127.0.0.1:8000'
 
 mydb = mysql.connector.connect(
