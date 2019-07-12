@@ -2,7 +2,7 @@ from django.core import serializers
 import random
 import string
 import hashlib
-import json
+import ujson as json
 from django.http import JsonResponse
 
 
@@ -56,7 +56,7 @@ def decrypt(encrypted, passphrase):
 
 def random_string(length=10):
     letters = string.ascii_lowercase + '0123456789'
-    return ''.join(random.choice(letters) for i in range(length))
+    return ''.join(random.choice(letters) for i in xrange(length))
 
 
 def sha(raw):

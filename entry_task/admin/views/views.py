@@ -4,24 +4,15 @@ from commonlib import db_connector
 from commonlib.decorator import parse_user
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
+from commonlib.schema import new_event_schema
 
 @parse_user
 def create_event(user, data):
     if user["role"] != 1:
         return make_response(UNAUTHORIZED, "Unauthorized!")
-    schema = {
-        "type": "object",
-        "required": ["title", "description", "date", "location", "photo_url"],
-        "properties": {
-            "title": {"type": "string"},
-            "description": {"type": "string"},
-            "date": {"type": "string", "format": "date-time"},
-            "location": {"type": "string"},
-            "photo_url": {"type": "string"}
-        }
-    }
+
     try:
-        validate(data, schema)
+        validate(data, new_event_schema)
         event = db_connector.new_event(user["name"], data)
         return make_response(OK, "ok", event)
     except ValidationError:

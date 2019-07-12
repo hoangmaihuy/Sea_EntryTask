@@ -4,3 +4,5 @@ crypto
 jsonschema
 python-dateutil
 mysql-connector-python
+ujson
+locustio

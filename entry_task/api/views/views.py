@@ -2,36 +2,29 @@ from __future__ import unicode_literals
 from commonlib import db_connector
 from commonlib.utilities import make_response, sha, random_string, decrypt
 from commonlib.constant import OK, BAD_REQUEST
-from commonlib.decorator import parse_event, parse_user, validate_username_password, validate_offset_size
+from commonlib.decorator import parse_event, parse_user, validate_offset_size
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
-import json
+import ujson as json
 from django.core.cache import cache
+from commonlib.schema import login_schema, events_schema
 
 
 def login(request):
-    schema = {
-        "type": "object",
-        "required": ["username"],
-        "properties": {
-            "username": {"type": "string"},
-            "password": {"type": "string"}
-        }
-    }
     data = json.loads(request.body)
     try:
-        validate(data, schema)
+        validate(data, login_schema)
         username = data.get('username')
         password = data.get('password')
-        key = cache.get(username+"_key")
-        if key:
+        if password:
+            key = cache.get(username + "_key")
             cache.delete(username+"_key")
-            if not password:
-                return make_response(BAD_REQUEST, "Bad request")
             user = db_connector.get_user(username)
-            salt = user.salt
-            raw_password = decrypt(password, key)
-            hash_password = sha(raw_password+salt)
+            try:
+                raw_password = decrypt(password, key)
+                hash_password = sha(raw_password+user.salt)
+            except:
+                return make_response(BAD_REQUEST, "Password Incorrect")
             if hash_password != user.password:
                 return make_response(BAD_REQUEST, "Password Incorrect")
             return make_response(OK, "Login Successfully", db_connector.new_session(user))
@@ -48,19 +41,8 @@ def login(request):
 
 @parse_user
 def event_get_list(user, data):
-    schema = {
-        "type": "object",
-        "required": ["offset", "size"],
-        "properties": {
-            "offset": {"type": "number", "minimum": 0},
-            "size": {"type": "number", "maximum": 100},
-            "start_date": {"type": "string", "format": "date-time"},
-            "end_date": {"type": "string", "format": "date-time"},
-            "category": {"type": "string"}
-        }
-    }
     try:
-        validate(data, schema)
+        validate(data, events_schema)
         offset = data.get('offset')
         size = data.get('size')
         category = data.get('category')

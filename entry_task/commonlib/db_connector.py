@@ -6,10 +6,6 @@ from django.core.cache import cache
 import dateutil.parser
 from django.forms.models import model_to_dict
 from django.db import connection
-from collections import namedtuple
-
-
-nt_result = namedtuple('Result', ['id', 'username', 'password', 'salt', 'role'])
 
 
 def get_user(username):
@@ -19,9 +15,11 @@ def get_user(username):
     cursor = connection.cursor()
     cursor.execute("SELECT id, username, password, salt, role FROM user_tab WHERE username=%s", [username])
     row = cursor.fetchone()
+    cursor.close()
     if not row:
         return None
-    user = nt_result(*row)
+    user = User(id=row[0], username=row[1], password=row[2], salt=row[3], role=row[4])
+    cache.set(username, user)
     return user
 
 
